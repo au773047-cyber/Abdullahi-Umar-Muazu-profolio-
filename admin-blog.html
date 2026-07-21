@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="theme-color" content="#2563eb">
+    <title>Blog Posts | Admin Panel</title>
+    <link rel="stylesheet" href="common.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        .content-area { padding: 32px; }
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        .blog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 24px;
+        }
+        .blog-admin-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            transition: var(--transition);
+        }
+        .blog-admin-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+        .blog-admin-image {
+            width: 100%;
+            height: 160px;
+            background: linear-gradient(135deg, var(--primary-dark), var(--secondary-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: white;
+        }
+        .blog-admin-content {
+            padding: 24px;
+        }
+        .blog-admin-meta {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 12px;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+        .blog-admin-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+        .blog-admin-excerpt {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+        .blog-admin-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-color);
+        }
+        .blog-admin-actions {
+            display: flex;
+            gap: 8px;
+        }
+        .editor-toolbar {
+            display: flex;
+            gap: 8px;
+            padding: 12px;
+            background: var(--bg-dark);
+            border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+            border: 1px solid var(--border-color);
+            border-bottom: none;
+            flex-wrap: wrap;
+        }
+        .editor-toolbar button {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 6px 10px;
+            border-radius: 4px;
+            transition: var(--transition);
+        }
+        .editor-toolbar button:hover {
+            background: var(--border-color);
+            color: var(--text-primary);
+        }
+        .editor-content {
+            min-height: 300px;
+            padding: 16px;
+            background: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+            color: var(--text-primary);
+            font-size: 1rem;
+            line-height: 1.8;
+            outline: none;
+        }
+        @media (max-width: 768px) {
+            .content-area { padding: 20px 16px; }
+            .blog-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header"><div class="sidebar-logo">AUM Admin</div></div>
+        <div class="sidebar-user">
+            <div class="sidebar-user-avatar">A</div>
+            <div><div style="font-weight:700;font-size:0.95rem;" id="adminName">Admin</div><div style="font-size:0.8rem;color:var(--text-secondary);">Super Admin</div></div>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="admin-dashboard.html"><span class="sidebar-menu-icon">📊</span> Dashboard</a></li>
+            <li><a href="admin-projects.html"><span class="sidebar-menu-icon">📁</span> Projects</a></li>
+            <li><a href="admin-messages.html"><span class="sidebar-menu-icon">✉️</span> Messages</a></li>
+            <li><a href="admin-users.html"><span class="sidebar-menu-icon">👥</span> Users</a></li>
+            <li><a href="admin-portfolio.html"><span class="sidebar-menu-icon">🎨</span> Portfolio</a></li>
+            <li><a href="admin-blog.html" class="active"><span class="sidebar-menu-icon">📝</span> Blog Posts</a></li>
+            <li><a href="admin-gallery.html"><span class="sidebar-menu-icon">🖼️</span> Gallery</a></li>
+            <li><a href="admin-social-media.html"><span class="sidebar-menu-icon">🔗</span> Social Media</a></li>
+            <li><a href="admin-storages.html"><span class="sidebar-menu-icon">💾</span> Storage (128GB)</a></li>
+            <li><a href="admin-analytics.html"><span class="sidebar-menu-icon">📈</span> Analytics</a></li>
+            <li><a href="admin-logs.html"><span class="sidebar-menu-icon">📋</span> Activity Logs</a></li>
+            <li><a href="admin-settings.html"><span class="sidebar-menu-icon">⚙️</span> Settings</a></li>
+        </ul>
+        <div style="padding: 16px; border-top: 1px solid var(--border-color);">
+            <button onclick="logoutAdmin()" class="btn btn-danger" style="width: 100%;"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="top-header">
+            <div style="display:flex;align-items:center;gap:16px;">
+                <button class="mobile-menu-btn" onclick="toggleSidebar()" aria-label="Menu">☰</button>
+                <h1 style="font-size:1.25rem;">Blog Posts</h1>
+            </div>
+            <div style="display:flex;align-items:center;gap:16px;">
+                <button class="theme-toggle" onclick="toggleTheme()"><i class="fas fa-moon"></i></button>
+                <div style="display:flex;align-items:center;gap:12px;">
+                    <div class="sidebar-user-avatar" style="width:36px;height:36px;font-size:0.9rem;">A</div>
+                    <span style="font-weight:600;" id="headerAdminName">Admin</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="content-area">
+            <div class="page-header">
+                <div>
+                    <h1>Blog Posts</h1>
+                    <p style="color:var(--text-secondary);">Manage your blog content</p>
+                </div>
+                <button class="btn btn-primary" onclick="openAddModal()">
+                    <i class="fas fa-plus"></i> New Post
+                </button>
+            </div>
+
+            <div class="blog-grid" id="blogGrid">
+                <!-- Blog posts loaded dynamically -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Add/Edit Modal -->
+    <div class="modal-overlay" id="blogModal">
+        <div class="modal" style="max-width: 800px;">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">New Blog Post</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <form id="blogForm">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">Post Title</label>
+                        <input type="text" class="form-input" id="blogTitle" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Excerpt</label>
+                        <textarea class="form-input" id="blogExcerpt" rows="2" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Content</label>
+                        <div class="editor-toolbar">
+                            <button type="button" onclick="formatText('bold')" title="Bold"><i class="fas fa-bold"></i></button>
+                            <button type="button" onclick="formatText('italic')" title="Italic"><i class="fas fa-italic"></i></button>
+                            <button type="button" onclick="formatText('underline')" title="Underline"><i class="fas fa-underline"></i></button>
+                            <button type="button" onclick="formatText('insertUnorderedList')" title="Bullet List"><i class="fas fa-list-ul"></i></button>
+                            <button type="button" onclick="formatText('insertOrderedList')" title="Numbered List"><i class="fas fa-list-ol"></i></button>
+                            <button type="button" onclick="formatText('justifyLeft')" title="Align Left"><i class="fas fa-align-left"></i></button>
+                            <button type="button" onclick="formatText('justifyCenter')" title="Align Center"><i class="fas fa-align-center"></i></button>
+                            <button type="button" onclick="formatText('justifyRight')" title="Align Right"><i class="fas fa-align-right"></i></button>
+                        </div>
+                        <div class="editor-content" id="blogContent" contenteditable="true"></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Icon/Emoji</label>
+                        <input type="text" class="form-input" id="blogIcon" placeholder="📝" maxlength="2">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Read Time</label>
+                        <input type="text" class="form-input" id="blogReadTime" placeholder="5 min read">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Status</label>
+                        <select class="form-input" id="blogStatus">
+                            <option value="published">Published</option>
+                            <option value="draft">Draft</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Post</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="toast-container"></div>
+
+    <script src="firebase-common.js"></script>
+    <script>
+        checkAuth();
+        document.getElementById('adminName').textContent = getAdminEmail().split('@')[0];
+        document.getElementById('headerAdminName').textContent = getAdminEmail().split('@')[0];
+
+        let allPosts = [];
+        let editingId = null;
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+            var overlay = document.getElementById('mobileNavOverlay');
+            if (overlay) {
+                overlay.classList.toggle('active');
+            }
+        }
+
+        async function loadBlogPosts() {
+            try {
+                allPosts = await DB.getBlogPosts();
+                renderBlogPosts();
+            } catch (error) {
+                showToast('Error loading blog posts', 'error');
+                console.error(error);
+            }
+        }
+
+        function renderBlogPosts() {
+            const grid = document.getElementById('blogGrid');
+            if (allPosts.length === 0) {
+                grid.innerHTML = `
+                    <div style="grid-column:1/-1;text-align:center;padding:64px;color:var(--text-secondary);">
+                        <i class="fas fa-pen-nib" style="font-size:4rem;margin-bottom:24px;display:block;"></i>
+                        <h3>No blog posts yet</h3>
+                        <p>Start writing your first blog post</p>
+                        <button class="btn btn-primary" onclick="openAddModal()" style="margin-top:16px;">
+                            <i class="fas fa-plus"></i> New Post
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = allPosts.map(post => `
+                <div class="blog-admin-card">
+                    <div class="blog-admin-image">${post.icon || '📝'}</div>
+                    <div class="blog-admin-content">
+                        <div class="blog-admin-meta">
+                            <span><i class="far fa-calendar"></i> ${formatDate(post.createdAt)}</span>
+                            <span><i class="far fa-clock"></i> ${post.readTime || '5 min read'}</span>
+                        </div>
+                        <h3 class="blog-admin-title">${post.title}</h3>
+                        <p class="blog-admin-excerpt">${post.excerpt}</p>
+                        <div class="blog-admin-footer">
+                            <span class="badge badge-${post.status === 'published' ? 'success' : 'warning'}">${post.status || 'published'}</span>
+                            <div class="blog-admin-actions">
+                                <button class="action-btn edit" onclick="editPost('${post.id}')" title="Edit"><i class="fas fa-edit"></i></button>
+                                <button class="action-btn delete" onclick="deletePost('${post.id}')" title="Delete"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openAddModal() {
+            editingId = null;
+            document.getElementById('modalTitle').textContent = 'New Blog Post';
+            document.getElementById('blogForm').reset();
+            document.getElementById('blogContent').innerHTML = '';
+            document.getElementById('blogModal').classList.add('active');
+        }
+
+        function editPost(id) {
+            const post = allPosts.find(p => p.id === id);
+            if (!post) return;
+
+            editingId = id;
+            document.getElementById('modalTitle').textContent = 'Edit Blog Post';
+            document.getElementById('blogTitle').value = post.title;
+            document.getElementById('blogExcerpt').value = post.excerpt;
+            document.getElementById('blogContent').innerHTML = post.content || '';
+            document.getElementById('blogIcon').value = post.icon || '';
+            document.getElementById('blogReadTime').value = post.readTime || '';
+            document.getElementById('blogStatus').value = post.status || 'published';
+            document.getElementById('blogModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('blogModal').classList.remove('active');
+        }
+
+        function formatText(command) {
+            document.execCommand(command, false, null);
+            document.getElementById('blogContent').focus();
+        }
+
+        document.getElementById('blogForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const post = {
+                title: document.getElementById('blogTitle').value,
+                excerpt: document.getElementById('blogExcerpt').value,
+                content: document.getElementById('blogContent').innerHTML,
+                icon: document.getElementById('blogIcon').value,
+                readTime: document.getElementById('blogReadTime').value,
+                status: document.getElementById('blogStatus').value
+            };
+
+            try {
+                if (editingId) {
+                    await DB.updateBlogPost(editingId, post);
+                    showToast('Blog post updated!', 'success');
+                } else {
+                    await DB.addBlogPost(post);
+                    showToast('Blog post published!', 'success');
+                }
+                closeModal();
+                loadBlogPosts();
+            } catch (error) {
+                showToast('Error saving post', 'error');
+                console.error(error);
+            }
+        });
+
+        async function deletePost(id) {
+            if (!confirm('Delete this blog post?')) return;
+            try {
+                await DB.deleteBlogPost(id);
+                showToast('Blog post deleted', 'success');
+                loadBlogPosts();
+            } catch (error) {
+                showToast('Error deleting post', 'error');
+                console.error(error);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadBlogPosts);
+    
+        document.addEventListener("DOMContentLoaded", initMobileMenu);
+</script>
+
+    <div class="mobile-nav-overlay" id="mobileNavOverlay" onclick="toggleSidebar()"></div>
+</body>
+</html>

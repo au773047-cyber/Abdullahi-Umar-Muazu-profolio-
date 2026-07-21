@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="theme-color" content="#2563eb">
+    <title>Social Media | Admin Panel</title>
+    <link rel="stylesheet" href="common.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        .content-area { padding: 32px; }
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        .social-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+        }
+        .social-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+            padding: 28px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        .social-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            transform: scaleX(0);
+            transition: var(--transition);
+        }
+        .social-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--border-light);
+        }
+        .social-card:hover::before {
+            transform: scaleX(1);
+        }
+        .social-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        .social-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            color: white;
+            flex-shrink: 0;
+        }
+        .social-icon.github { background: linear-gradient(135deg, #333, #24292e); }
+        .social-icon.linkedin { background: linear-gradient(135deg, #0077b5, #005885); }
+        .social-icon.twitter { background: linear-gradient(135deg, #1da1f2, #0d8bd9); }
+        .social-icon.instagram { background: linear-gradient(135deg, #e4405f, #c32aa3, #f46f30); }
+        .social-icon.facebook { background: linear-gradient(135deg, #1877f2, #0d65d9); }
+        .social-icon.youtube { background: linear-gradient(135deg, #ff0000, #cc0000); }
+        .social-icon.tiktok { background: linear-gradient(135deg, #000000, #25f4ee, #fe2c55); }
+        .social-icon.whatsapp { background: linear-gradient(135deg, #25d366, #128c7e); }
+        .social-icon.telegram { background: linear-gradient(135deg, #0088cc, #006699); }
+        .social-info h3 {
+            font-size: 1.2rem;
+            margin-bottom: 4px;
+        }
+        .social-info p {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+        .social-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 20px 0;
+            padding: 16px 0;
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .social-stat {
+            text-align: center;
+        }
+        .social-stat-value {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        .social-stat-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+        .social-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .social-link-btn {
+            flex: 1;
+            padding: 10px;
+            border-radius: var(--radius-sm);
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .social-link-btn.primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+        }
+        .social-link-btn.secondary {
+            border: 1.5px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+        .social-link-btn:hover {
+            transform: translateY(-2px);
+        }
+        .platform-selector {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        .platform-option {
+            padding: 16px;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius);
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            background: var(--bg-card);
+        }
+        .platform-option:hover, .platform-option.selected {
+            border-color: var(--primary-color);
+            background: var(--primary-glow);
+        }
+        .platform-option i {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+            display: block;
+        }
+        .platform-option span {
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        @media (max-width: 768px) {
+            .content-area { padding: 20px 16px; }
+            .social-grid { grid-template-columns: 1fr; }
+            .platform-selector { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header"><div class="sidebar-logo">AUM Admin</div></div>
+        <div class="sidebar-user">
+            <div class="sidebar-user-avatar" id="sidebarAvatar">A</div>
+            <div><div style="font-weight:700;font-size:0.95rem;" id="adminName">Admin</div><div style="font-size:0.8rem;color:var(--text-secondary);">Super Admin</div></div>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="admin-dashboard.html"><span class="sidebar-menu-icon">📊</span> Dashboard</a></li>
+            <li><a href="admin-projects.html"><span class="sidebar-menu-icon">📁</span> Projects</a></li>
+            <li><a href="admin-messages.html"><span class="sidebar-menu-icon">✉️</span> Messages</a></li>
+            <li><a href="admin-users.html"><span class="sidebar-menu-icon">👥</span> Users</a></li>
+            <li><a href="admin-portfolio.html"><span class="sidebar-menu-icon">🎨</span> Portfolio</a></li>
+            <li><a href="admin-blog.html"><span class="sidebar-menu-icon">📝</span> Blog Posts</a></li>
+            <li><a href="admin-gallery.html"><span class="sidebar-menu-icon">🖼️</span> Gallery</a></li>
+            <li><a href="admin-social-media.html" class="active"><span class="sidebar-menu-icon">🔗</span> Social Media</a></li>
+            <li><a href="admin-storages.html"><span class="sidebar-menu-icon">💾</span> Storage (128GB)</a></li>
+            <li><a href="admin-analytics.html"><span class="sidebar-menu-icon">📈</span> Analytics</a></li>
+            <li><a href="admin-logs.html"><span class="sidebar-menu-icon">📋</span> Activity Logs</a></li>
+            <li><a href="admin-settings.html"><span class="sidebar-menu-icon">⚙️</span> Settings</a></li>
+        </ul>
+        <div style="padding: 16px; border-top: 1px solid var(--border-color);">
+            <button onclick="logoutAdmin()" class="btn btn-danger" style="width: 100%;"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="top-header">
+            <div style="display:flex;align-items:center;gap:16px;">
+                <button class="mobile-menu-btn" onclick="toggleSidebar()" aria-label="Menu">☰</button>
+                <h1 style="font-size:1.25rem;">Social Media</h1>
+            </div>
+            <div style="display:flex;align-items:center;gap:16px;">
+                <button class="theme-toggle" onclick="toggleTheme()"><i class="fas fa-moon"></i></button>
+                <div style="display:flex;align-items:center;gap:12px;">
+                    <div class="sidebar-user-avatar" style="width:36px;height:36px;font-size:0.9rem;" id="headerAvatar">A</div>
+                    <span style="font-weight:600;" id="headerAdminName">Admin</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="content-area">
+            <div class="page-header">
+                <div>
+                    <h1>Social Media Management</h1>
+                    <p style="color:var(--text-secondary);">Manage all your social media links and accounts</p>
+                </div>
+                <button class="btn btn-primary" onclick="openAddModal()">
+                    <i class="fas fa-plus"></i> Add Account
+                </button>
+            </div>
+
+            <div class="social-grid" id="socialGrid">
+                <!-- Social accounts loaded dynamically -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Add/Edit Modal -->
+    <div class="modal-overlay" id="socialModal">
+        <div class="modal" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Add Social Media Account</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <form id="socialForm">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">Select Platform</label>
+                        <div class="platform-selector" id="platformSelector">
+                            <div class="platform-option" data-platform="github" onclick="selectPlatform(this)">
+                                <i class="fab fa-github"></i>
+                                <span>GitHub</span>
+                            </div>
+                            <div class="platform-option" data-platform="linkedin" onclick="selectPlatform(this)">
+                                <i class="fab fa-linkedin"></i>
+                                <span>LinkedIn</span>
+                            </div>
+                            <div class="platform-option" data-platform="twitter" onclick="selectPlatform(this)">
+                                <i class="fab fa-twitter"></i>
+                                <span>Twitter</span>
+                            </div>
+                            <div class="platform-option" data-platform="instagram" onclick="selectPlatform(this)">
+                                <i class="fab fa-instagram"></i>
+                                <span>Instagram</span>
+                            </div>
+                            <div class="platform-option" data-platform="facebook" onclick="selectPlatform(this)">
+                                <i class="fab fa-facebook"></i>
+                                <span>Facebook</span>
+                            </div>
+                            <div class="platform-option" data-platform="youtube" onclick="selectPlatform(this)">
+                                <i class="fab fa-youtube"></i>
+                                <span>YouTube</span>
+                            </div>
+                            <div class="platform-option" data-platform="tiktok" onclick="selectPlatform(this)">
+                                <i class="fab fa-tiktok"></i>
+                                <span>TikTok</span>
+                            </div>
+                            <div class="platform-option" data-platform="whatsapp" onclick="selectPlatform(this)">
+                                <i class="fab fa-whatsapp"></i>
+                                <span>WhatsApp</span>
+                            </div>
+                            <div class="platform-option" data-platform="telegram" onclick="selectPlatform(this)">
+                                <i class="fab fa-telegram"></i>
+                                <span>Telegram</span>
+                            </div>
+                        </div>
+                        <input type="hidden" id="selectedPlatform" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Profile URL</label>
+                        <input type="url" class="form-input" id="socialUrl" placeholder="https://..." required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Username/Handle</label>
+                        <input type="text" class="form-input" id="socialUsername" placeholder="@username" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Display Name</label>
+                        <input type="text" class="form-input" id="socialDisplayName" placeholder="Your display name">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Followers (optional)</label>
+                        <input type="number" class="form-input" id="socialFollowers" placeholder="0" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Status</label>
+                        <select class="form-input" id="socialStatus">
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Account</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="toast-container"></div>
+    <script src="firebase-common.js"></script>
+    <script>
+        checkAuth();
+        const adminEmail = getAdminEmail();
+        const adminName = adminEmail.split('@')[0];
+        document.getElementById('adminName').textContent = adminName;
+        document.getElementById('headerAdminName').textContent = adminName;
+        document.getElementById('sidebarAvatar').textContent = adminName.charAt(0).toUpperCase();
+        document.getElementById('headerAvatar').textContent = adminName.charAt(0).toUpperCase();
+
+        let allSocial = [];
+        let editingId = null;
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+            var overlay = document.getElementById('mobileNavOverlay');
+            if (overlay) {
+                overlay.classList.toggle('active');
+            }
+        }
+
+        const platformConfig = {
+            github: { icon: 'fab fa-github', color: '#333', name: 'GitHub' },
+            linkedin: { icon: 'fab fa-linkedin', color: '#0077b5', name: 'LinkedIn' },
+            twitter: { icon: 'fab fa-twitter', color: '#1da1f2', name: 'Twitter' },
+            instagram: { icon: 'fab fa-instagram', color: '#e4405f', name: 'Instagram' },
+            facebook: { icon: 'fab fa-facebook', color: '#1877f2', name: 'Facebook' },
+            youtube: { icon: 'fab fa-youtube', color: '#ff0000', name: 'YouTube' },
+            tiktok: { icon: 'fab fa-tiktok', color: '#000000', name: 'TikTok' },
+            whatsapp: { icon: 'fab fa-whatsapp', color: '#25d366', name: 'WhatsApp' },
+            telegram: { icon: 'fab fa-telegram', color: '#0088cc', name: 'Telegram' }
+        };
+
+        async function loadSocialMedia() {
+            try {
+                allSocial = await DB.getSocialMedia();
+                if (allSocial.length === 0) {
+                    const defaults = [
+                        { platform: 'github', url: 'https://github.com/abdullahiumar', username: '@abdullahiumar', displayName: 'Abdullahi Umar', followers: 150, status: 'active' },
+                        { platform: 'linkedin', url: 'https://linkedin.com/in/abdullahiumar', username: '@abdullahiumar', displayName: 'Abdullahi Umar Muazu', followers: 500, status: 'active' },
+                        { platform: 'twitter', url: 'https://twitter.com/abdullahiumar', username: '@abdullahiumar', displayName: 'Abdullahi Umar', followers: 1200, status: 'active' }
+                    ];
+                    for (const s of defaults) {
+                        await DB.addSocialMedia(s);
+                    }
+                    allSocial = await DB.getSocialMedia();
+                }
+                renderSocialMedia();
+            } catch (error) {
+                showToast('Error loading social media accounts', 'error');
+                console.error(error);
+            }
+        }
+
+        function renderSocialMedia() {
+            const grid = document.getElementById('socialGrid');
+            if (allSocial.length === 0) {
+                grid.innerHTML = `
+                    <div style="grid-column:1/-1;text-align:center;padding:64px;color:var(--text-secondary);">
+                        <i class="fas fa-share-alt" style="font-size:4rem;margin-bottom:24px;display:block;"></i>
+                        <h3>No social media accounts</h3>
+                        <p>Add your first social media account</p>
+                        <button class="btn btn-primary" onclick="openAddModal()" style="margin-top:16px;">
+                            <i class="fas fa-plus"></i> Add Account
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = allSocial.map(social => {
+                const config = platformConfig[social.platform] || { icon: 'fas fa-link', color: '#666', name: 'Unknown' };
+                return `
+                    <div class="social-card">
+                        <div class="social-header">
+                            <div class="social-icon ${social.platform}">
+                                <i class="${config.icon}"></i>
+                            </div>
+                            <div class="social-info">
+                                <h3>${config.name}</h3>
+                                <p>${social.username || social.displayName || ''}</p>
+                            </div>
+                        </div>
+                        <div class="social-stats">
+                            <div class="social-stat">
+                                <div class="social-stat-value">${social.followers || 0}</div>
+                                <div class="social-stat-label">Followers</div>
+                            </div>
+                            <div class="social-stat">
+                                <div class="social-stat-value">${social.status === 'active' ? '✅' : '⏸️'}</div>
+                                <div class="social-stat-label">${social.status || 'active'}</div>
+                            </div>
+                        </div>
+                        <div class="social-actions">
+                            <a href="${social.url}" target="_blank" rel="noopener" class="social-link-btn primary">
+                                <i class="fas fa-external-link-alt"></i> Visit
+                            </a>
+                            <button class="social-link-btn secondary" onclick="editSocial('${social.id}')">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button class="social-link-btn secondary" onclick="deleteSocial('${social.id}')" style="color:var(--danger-color);">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function selectPlatform(el) {
+            document.querySelectorAll('.platform-option').forEach(opt => opt.classList.remove('selected'));
+            el.classList.add('selected');
+            document.getElementById('selectedPlatform').value = el.dataset.platform;
+        }
+
+        function openAddModal() {
+            editingId = null;
+            document.getElementById('modalTitle').textContent = 'Add Social Media Account';
+            document.getElementById('socialForm').reset();
+            document.querySelectorAll('.platform-option').forEach(opt => opt.classList.remove('selected'));
+            document.getElementById('socialModal').classList.add('active');
+        }
+
+        function editSocial(id) {
+            const social = allSocial.find(s => s.id === id);
+            if (!social) return;
+
+            editingId = id;
+            document.getElementById('modalTitle').textContent = 'Edit Social Media Account';
+            document.getElementById('socialUrl').value = social.url;
+            document.getElementById('socialUsername').value = social.username || '';
+            document.getElementById('socialDisplayName').value = social.displayName || '';
+            document.getElementById('socialFollowers').value = social.followers || 0;
+            document.getElementById('socialStatus').value = social.status || 'active';
+            
+            document.querySelectorAll('.platform-option').forEach(opt => {
+                opt.classList.toggle('selected', opt.dataset.platform === social.platform);
+            });
+            document.getElementById('selectedPlatform').value = social.platform;
+            document.getElementById('socialModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('socialModal').classList.remove('active');
+            editingId = null;
+        }
+
+        document.getElementById('socialForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const platform = document.getElementById('selectedPlatform').value;
+            if (!platform) {
+                showToast('Please select a platform', 'warning');
+                return;
+            }
+
+            const social = {
+                platform: platform,
+                url: document.getElementById('socialUrl').value.trim(),
+                username: document.getElementById('socialUsername').value.trim(),
+                displayName: document.getElementById('socialDisplayName').value.trim(),
+                followers: parseInt(document.getElementById('socialFollowers').value) || 0,
+                status: document.getElementById('socialStatus').value
+            };
+
+            try {
+                if (editingId) {
+                    await DB.updateSocialMedia(editingId, social);
+                    showToast('Social media account updated!', 'success');
+                } else {
+                    await DB.addSocialMedia(social);
+                    showToast('Social media account added!', 'success');
+                }
+                closeModal();
+                loadSocialMedia();
+            } catch (error) {
+                showToast('Error saving account', 'error');
+                console.error(error);
+            }
+        });
+
+        async function deleteSocial(id) {
+            const social = allSocial.find(s => s.id === id);
+            showConfirm(
+                'Delete Account',
+                `Delete ${social?.username || 'this account'}?`,
+                async () => {
+                    try {
+                        await DB.deleteSocialMedia(id);
+                        showToast('Account deleted', 'success');
+                        loadSocialMedia();
+                    } catch (error) {
+                        showToast('Error deleting account', 'error');
+                    }
+                }
+            );
+        }
+
+        document.addEventListener('DOMContentLoaded', loadSocialMedia);
+    
+        document.addEventListener("DOMContentLoaded", initMobileMenu);
+</script>
+
+    <div class="mobile-nav-overlay" id="mobileNavOverlay" onclick="toggleSidebar()"></div>
+</body>
+</html>

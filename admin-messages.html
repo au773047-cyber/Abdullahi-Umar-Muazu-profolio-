@@ -1,0 +1,421 @@
+
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="theme-color" content="#2563eb">
+    <title>Messages | Admin Panel</title>
+    <link rel="stylesheet" href="common.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        .content-area { padding: 32px; }
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        .messages-container {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 0;
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            min-height: 600px;
+        }
+        .messages-list {
+            border-right: 1px solid var(--border-color);
+            overflow-y: auto;
+            max-height: 600px;
+        }
+        .messages-list-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .messages-list-header h3 {
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .message-item {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .message-item:hover {
+            background: rgba(37, 99, 235, 0.05);
+        }
+        .message-item.active {
+            background: rgba(37, 99, 235, 0.1);
+            border-left: 3px solid var(--primary-color);
+        }
+        .message-item.unread {
+            background: rgba(37, 99, 235, 0.03);
+        }
+        .message-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+        .message-item-name {
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+        .message-item-time {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+        .message-item-subject {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+        .message-item-preview {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+        .message-detail {
+            padding: 32px;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        .message-detail-header {
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 24px;
+        }
+        .message-detail-from {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        .message-detail-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: white;
+            font-size: 1.2rem;
+        }
+        .message-detail-info h4 {
+            font-size: 1.1rem;
+            margin-bottom: 4px;
+        }
+        .message-detail-info p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        .message-detail-meta {
+            display: flex;
+            gap: 24px;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+        .message-detail-meta span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .message-detail-body {
+            flex: 1;
+            line-height: 1.8;
+            color: var(--text-primary);
+            font-size: 1rem;
+        }
+        .message-detail-actions {
+            display: flex;
+            gap: 12px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border-color);
+        }
+        .empty-detail {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: var(--text-secondary);
+        }
+        .empty-detail i {
+            font-size: 4rem;
+            margin-bottom: 24px;
+            color: var(--border-color);
+        }
+        @media (max-width: 1024px) {
+            .messages-container { grid-template-columns: 1fr; }
+            .messages-list { max-height: 300px; border-right: none; border-bottom: 1px solid var(--border-color); }
+        }
+        @media (max-width: 768px) {
+            .content-area { padding: 20px 16px; }
+            .message-detail { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header"><div class="sidebar-logo">AUM Admin</div></div>
+        <div class="sidebar-user">
+            <div class="sidebar-user-avatar">A</div>
+            <div><div style="font-weight:700;font-size:0.95rem;" id="adminName">Admin</div><div style="font-size:0.8rem;color:var(--text-secondary);">Super Admin</div></div>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="admin-dashboard.html"><span class="sidebar-menu-icon">📊</span> Dashboard</a></li>
+            <li><a href="admin-projects.html"><span class="sidebar-menu-icon">📁</span> Projects</a></li>
+            <li><a href="admin-messages.html" class="active"><span class="sidebar-menu-icon">✉️</span> Messages</a></li>
+            <li><a href="admin-users.html"><span class="sidebar-menu-icon">👥</span> Users</a></li>
+            <li><a href="admin-portfolio.html"><span class="sidebar-menu-icon">🎨</span> Portfolio</a></li>
+            <li><a href="admin-blog.html"><span class="sidebar-menu-icon">📝</span> Blog Posts</a></li>
+            <li><a href="admin-gallery.html"><span class="sidebar-menu-icon">🖼️</span> Gallery</a></li>
+            <li><a href="admin-social-media.html"><span class="sidebar-menu-icon">🔗</span> Social Media</a></li>
+            <li><a href="admin-storages.html"><span class="sidebar-menu-icon">💾</span> Storage (128GB)</a></li>
+            <li><a href="admin-analytics.html"><span class="sidebar-menu-icon">📈</span> Analytics</a></li>
+            <li><a href="admin-logs.html"><span class="sidebar-menu-icon">📋</span> Activity Logs</a></li>
+            <li><a href="admin-settings.html"><span class="sidebar-menu-icon">⚙️</span> Settings</a></li>
+        </ul>
+        <div style="padding: 16px; border-top: 1px solid var(--border-color);">
+            <button onclick="logoutAdmin()" class="btn btn-danger" style="width: 100%;"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="top-header">
+            <div style="display:flex;align-items:center;gap:16px;">
+                <button class="mobile-menu-btn" onclick="toggleSidebar()" aria-label="Menu">☰</button>
+                <h1 style="font-size:1.25rem;">Messages</h1>
+            </div>
+            <div style="display:flex;align-items:center;gap:16px;">
+                <button class="theme-toggle" onclick="toggleTheme()"><i class="fas fa-moon"></i></button>
+                <div style="display:flex;align-items:center;gap:12px;">
+                    <div class="sidebar-user-avatar" style="width:36px;height:36px;font-size:0.9rem;">A</div>
+                    <span style="font-weight:600;" id="headerAdminName">Admin</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="content-area">
+            <div class="page-header">
+                <div>
+                    <h1>Messages</h1>
+                    <p style="color:var(--text-secondary);">Manage contact form submissions</p>
+                </div>
+                <div style="display:flex;gap:12px;">
+                    <button class="btn btn-secondary" onclick="markAllRead()">
+                        <i class="fas fa-check-double"></i> Mark All Read
+                    </button>
+                    <button class="btn btn-danger" onclick="deleteAllMessages()">
+                        <i class="fas fa-trash"></i> Delete All
+                    </button>
+                </div>
+            </div>
+
+            <div class="messages-container">
+                <div class="messages-list">
+                    <div class="messages-list-header">
+                        <h3><i class="fas fa-inbox"></i> Inbox</h3>
+                        <span class="badge badge-success" id="unreadCount">0</span>
+                    </div>
+                    <div id="messagesList"></div>
+                </div>
+                <div class="message-detail" id="messageDetail">
+                    <div class="empty-detail">
+                        <i class="fas fa-envelope-open"></i>
+                        <h3>Select a message</h3>
+                        <p>Click on a message from the list to view its contents</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div class="toast-container"></div>
+
+    <script src="firebase-common.js"></script>
+    <script>
+        checkAuth();
+        document.getElementById('adminName').textContent = getAdminEmail().split('@')[0];
+        document.getElementById('headerAdminName').textContent = getAdminEmail().split('@')[0];
+
+        let allMessages = [];
+        let selectedId = null;
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+            var overlay = document.getElementById('mobileNavOverlay');
+            if (overlay) {
+                overlay.classList.toggle('active');
+            }
+        }
+
+        async function loadMessages() {
+            try {
+                allMessages = await DB.getMessages();
+                renderMessagesList();
+                updateUnreadCount();
+            } catch (error) {
+                showToast('Error loading messages', 'error');
+            }
+        }
+
+        function renderMessagesList() {
+            const container = document.getElementById('messagesList');
+            if (allMessages.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align:center;padding:40px 20px;color:var(--text-secondary);">
+                        <i class="fas fa-inbox" style="font-size:3rem;margin-bottom:16px;display:block;"></i>
+                        <p>No messages yet</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = allMessages.map(msg => `
+                <div class="message-item ${msg.read ? '' : 'unread'} ${msg.id === selectedId ? 'active' : ''}" 
+                     onclick="selectMessage('${msg.id}')">
+                    <div class="message-item-header">
+                        <span class="message-item-name">${msg.name} ${msg.read ? '' : '<span style="color:var(--primary-color);">●</span>'}</span>
+                        <span class="message-item-time">${formatDate(msg.createdAt)}</span>
+                    </div>
+                    <div class="message-item-subject">${msg.subject}</div>
+                    <div class="message-item-preview">${truncateText(msg.message, 50)}</div>
+                </div>
+            `).join('');
+        }
+
+        async function selectMessage(id) {
+            selectedId = id;
+            const msg = allMessages.find(m => m.id === id);
+            if (!msg) return;
+
+            renderMessagesList();
+
+            document.getElementById('messageDetail').innerHTML = `
+                <div class="message-detail-header">
+                    <div class="message-detail-from">
+                        <div class="message-detail-avatar">${msg.name.charAt(0).toUpperCase()}</div>
+                        <div class="message-detail-info">
+                            <h4>${msg.name}</h4>
+                            <p>${msg.email}</p>
+                        </div>
+                    </div>
+                    <div class="message-detail-meta">
+                        <span><i class="far fa-clock"></i> ${formatDate(msg.createdAt)}</span>
+                        <span><i class="fas fa-tag"></i> ${msg.subject}</span>
+                    </div>
+                </div>
+                <div class="message-detail-body">
+                    <p>${msg.message.replace(/\n/g, '<br>')}</p>
+                </div>
+                <div class="message-detail-actions">
+                    <a href="mailto:${msg.email}?subject=Re: ${msg.subject}" class="btn btn-primary">
+                        <i class="fas fa-reply"></i> Reply
+                    </a>
+                    <button class="btn btn-secondary" onclick="copyMessage('${msg.id}')">
+                        <i class="fas fa-copy"></i> Copy
+                    </button>
+                    <button class="btn btn-danger" onclick="deleteMessage('${msg.id}')">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                </div>
+            `;
+
+            if (!msg.read) {
+                await DB.markMessageAsRead(id);
+                msg.read = true;
+                updateUnreadCount();
+            }
+        }
+
+        function updateUnreadCount() {
+            const unread = allMessages.filter(m => !m.read).length;
+            document.getElementById('unreadCount').textContent = unread;
+        }
+
+        async function markAllRead() {
+            for (const msg of allMessages.filter(m => !m.read)) {
+                await DB.markMessageAsRead(msg.id);
+                msg.read = true;
+            }
+            renderMessagesList();
+            updateUnreadCount();
+            showToast('All messages marked as read', 'success');
+        }
+
+        async function deleteMessage(id) {
+            if (!confirm('Delete this message?')) return;
+            try {
+                await DB.deleteMessage(id);
+                allMessages = allMessages.filter(m => m.id !== id);
+                selectedId = null;
+                renderMessagesList();
+                document.getElementById('messageDetail').innerHTML = `
+                    <div class="empty-detail">
+                        <i class="fas fa-envelope-open"></i>
+                        <h3>Select a message</h3>
+                        <p>Click on a message from the list to view its contents</p>
+                    </div>
+                `;
+                updateUnreadCount();
+                showToast('Message deleted', 'success');
+            } catch (error) {
+                showToast('Error deleting message', 'error');
+            }
+        }
+
+        async function deleteAllMessages() {
+            if (!confirm('Delete ALL messages? This cannot be undone!')) return;
+            try {
+                for (const msg of allMessages) {
+                    await DB.deleteMessage(msg.id);
+                }
+                allMessages = [];
+                selectedId = null;
+                renderMessagesList();
+                document.getElementById('messageDetail').innerHTML = `
+                    <div class="empty-detail">
+                        <i class="fas fa-envelope-open"></i>
+                        <h3>Select a message</h3>
+                        <p>Click on a message from the list to view its contents</p>
+                    </div>
+                `;
+                updateUnreadCount();
+                showToast('All messages deleted', 'success');
+            } catch (error) {
+                showToast('Error deleting messages', 'error');
+            }
+        }
+
+        function copyMessage(id) {
+            const msg = allMessages.find(m => m.id === id);
+            if (!msg) return;
+            const text = `From: ${msg.name} (${msg.email})\nSubject: ${msg.subject}\nDate: ${formatDate(msg.createdAt)}\n\n${msg.message}`;
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('Message copied to clipboard', 'success');
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', loadMessages);
+    
+        document.addEventListener("DOMContentLoaded", initMobileMenu);
+</script>
+
+    <div class="mobile-nav-overlay" id="mobileNavOverlay" onclick="toggleSidebar()"></div>
+</body>
+</html>

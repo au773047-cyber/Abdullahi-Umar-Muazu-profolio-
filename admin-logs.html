@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="theme-color" content="#2563eb">
+    <title>Activity Logs | Admin Panel</title>
+    <link rel="stylesheet" href="common.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        .content-area { padding: 32px; }
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        .logs-container {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+        }
+        .logs-filter {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .log-entry {
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: var(--transition);
+        }
+        .log-entry:hover {
+            background: rgba(37, 99, 235, 0.05);
+        }
+        .log-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+        .log-icon.create { background: rgba(16, 185, 129, 0.2); color: var(--success-color); }
+        .log-icon.update { background: rgba(37, 99, 235, 0.2); color: var(--primary-color); }
+        .log-icon.delete { background: rgba(239, 68, 68, 0.2); color: var(--danger-color); }
+        .log-icon.login { background: rgba(245, 158, 11, 0.2); color: var(--accent-color); }
+        .log-details h4 {
+            font-size: 0.95rem;
+            margin-bottom: 4px;
+        }
+        .log-details p {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+        .log-time {
+            margin-left: auto;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            white-space: nowrap;
+        }
+        @media (max-width: 768px) {
+            .content-area { padding: 20px 16px; }
+            .log-entry { flex-wrap: wrap; }
+            .log-time { margin-left: 0; width: 100%; margin-top: 8px; }
+        }
+    </style>
+</head>
+<body>
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header"><div class="sidebar-logo">AUM Admin</div></div>
+        <div class="sidebar-user">
+            <div class="sidebar-user-avatar">A</div>
+            <div><div style="font-weight:700;font-size:0.95rem;" id="adminName">Admin</div><div style="font-size:0.8rem;color:var(--text-secondary);">Super Admin</div></div>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="admin-dashboard.html"><span class="sidebar-menu-icon">📊</span> Dashboard</a></li>
+            <li><a href="admin-projects.html"><span class="sidebar-menu-icon">📁</span> Projects</a></li>
+            <li><a href="admin-messages.html"><span class="sidebar-menu-icon">✉️</span> Messages</a></li>
+            <li><a href="admin-users.html"><span class="sidebar-menu-icon">👥</span> Users</a></li>
+            <li><a href="admin-portfolio.html"><span class="sidebar-menu-icon">🎨</span> Portfolio</a></li>
+            <li><a href="admin-blog.html"><span class="sidebar-menu-icon">📝</span> Blog Posts</a></li>
+            <li><a href="admin-gallery.html"><span class="sidebar-menu-icon">🖼️</span> Gallery</a></li>
+            <li><a href="admin-social-media.html"><span class="sidebar-menu-icon">🔗</span> Social Media</a></li>
+            <li><a href="admin-storages.html"><span class="sidebar-menu-icon">💾</span> Storage (128GB)</a></li>
+            <li><a href="admin-analytics.html"><span class="sidebar-menu-icon">📈</span> Analytics</a></li>
+            <li><a href="admin-logs.html" class="active"><span class="sidebar-menu-icon">📋</span> Activity Logs</a></li>
+            <li><a href="admin-settings.html"><span class="sidebar-menu-icon">⚙️</span> Settings</a></li>
+        </ul>
+        <div style="padding: 16px; border-top: 1px solid var(--border-color);">
+            <button onclick="logoutAdmin()" class="btn btn-danger" style="width: 100%;"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="top-header">
+            <div style="display:flex;align-items:center;gap:16px;">
+                <button class="mobile-menu-btn" onclick="toggleSidebar()" aria-label="Menu">☰</button>
+                <h1 style="font-size:1.25rem;">Activity Logs</h1>
+            </div>
+            <div style="display:flex;align-items:center;gap:16px;">
+                <button class="theme-toggle" onclick="toggleTheme()"><i class="fas fa-moon"></i></button>
+                <div style="display:flex;align-items:center;gap:12px;">
+                    <div class="sidebar-user-avatar" style="width:36px;height:36px;font-size:0.9rem;">A</div>
+                    <span style="font-weight:600;" id="headerAdminName">Admin</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="content-area">
+            <div class="page-header">
+                <div>
+                    <h1>Activity Logs</h1>
+                    <p style="color:var(--text-secondary);">Track all admin activities</p>
+                </div>
+                <button class="btn btn-secondary" onclick="clearLogs()"><i class="fas fa-trash"></i> Clear Logs</button>
+            </div>
+
+            <div class="logs-container">
+                <div class="logs-filter">
+                    <select class="filter-select" id="logFilter" onchange="filterLogs()">
+                        <option value="all">All Activities</option>
+                        <option value="create">Create</option>
+                        <option value="update">Update</option>
+                        <option value="delete">Delete</option>
+                        <option value="login">Login</option>
+                    </select>
+                    <input type="date" class="form-input" style="width: auto;" id="logDate" onchange="filterLogs()">
+                </div>
+                <div id="logsList">
+                    <!-- Logs loaded dynamically -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div class="toast-container"></div>
+    <script src="firebase-common.js"></script>
+    <script>
+        checkAuth();
+        document.getElementById('adminName').textContent = getAdminEmail().split('@')[0];
+        document.getElementById('headerAdminName').textContent = getAdminEmail().split('@')[0];
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+            var overlay = document.getElementById('mobileNavOverlay');
+            if (overlay) {
+                overlay.classList.toggle('active');
+            }
+        }
+
+        // Default logs data
+        const defaultLogs = [
+            { type: 'login', title: 'Admin Login', description: 'Successful login from IP 192.168.1.1', time: '2 minutes ago', createdAt: new Date().toISOString() },
+            { type: 'create', title: 'New Project Created', description: 'E-Commerce Platform project added', time: '2 hours ago', createdAt: new Date(Date.now() - 7200000).toISOString() },
+            { type: 'update', title: 'Portfolio Updated', description: 'About section content modified', time: '5 hours ago', createdAt: new Date(Date.now() - 18000000).toISOString() },
+            { type: 'create', title: 'New Blog Post', description: 'Getting Started with Firebase published', time: '1 day ago', createdAt: new Date(Date.now() - 86400000).toISOString() },
+            { type: 'delete', title: 'Project Deleted', description: 'Old portfolio item removed', time: '2 days ago', createdAt: new Date(Date.now() - 172800000).toISOString() },
+            { type: 'login', title: 'Admin Login', description: 'Successful login from IP 192.168.1.105', time: '3 days ago', createdAt: new Date(Date.now() - 259200000).toISOString() }
+        ];
+
+        async function loadLogs() {
+            try {
+                let logs = await DB.getLogs();
+                if (logs.length === 0) {
+                    // Seed default logs
+                    for (const log of defaultLogs) {
+                        await DB.addLog(log);
+                    }
+                    logs = defaultLogs;
+                }
+                renderLogs(logs);
+            } catch (error) {
+                console.error('Error loading logs:', error);
+                renderLogs(defaultLogs);
+            }
+        }
+
+        function renderLogs(logs) {
+            const container = document.getElementById('logsList');
+            if (logs.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align:center;padding:40px;color:var(--text-secondary);">
+                        <i class="fas fa-check-circle" style="font-size:2rem;margin-bottom:16px;display:block;"></i>
+                        <p>No logs to display</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const icons = {
+                create: 'fa-plus',
+                update: 'fa-edit',
+                delete: 'fa-trash',
+                login: 'fa-sign-in-alt'
+            };
+
+            container.innerHTML = logs.map(log => `
+                <div class="log-entry" data-type="${log.type}">
+                    <div class="log-icon ${log.type}"><i class="fas ${icons[log.type] || 'fa-info'}"></i></div>
+                    <div class="log-details">
+                        <h4>${log.title}</h4>
+                        <p>${log.description}</p>
+                    </div>
+                    <div class="log-time">${log.time || formatDate(log.createdAt)}</div>
+                </div>
+            `).join('');
+        }
+
+        function filterLogs() {
+            const type = document.getElementById('logFilter').value;
+            const date = document.getElementById('logDate').value;
+            const entries = document.querySelectorAll('.log-entry');
+            
+            entries.forEach(entry => {
+                let show = true;
+                if (type !== 'all' && entry.dataset.type !== type) {
+                    show = false;
+                }
+                // Date filtering would require actual date comparison
+                entry.style.display = show ? 'flex' : 'none';
+            });
+        }
+
+        async function clearLogs() {
+            if (!confirm('Clear all activity logs?')) return;
+            try {
+                await DB.clearLogs();
+                renderLogs([]);
+                showToast('Logs cleared', 'success');
+            } catch (error) {
+                showToast('Error clearing logs', 'error');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadLogs);
+    
+        document.addEventListener("DOMContentLoaded", initMobileMenu);
+</script>
+
+    <div class="mobile-nav-overlay" id="mobileNavOverlay" onclick="toggleSidebar()"></div>
+</body>
+</html>

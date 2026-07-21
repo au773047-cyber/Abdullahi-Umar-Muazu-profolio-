@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="theme-color" content="#2563eb">
+    <title>Analytics | Admin Panel</title>
+    <link rel="stylesheet" href="common.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        .content-area { padding: 32px; }
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+        .chart-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+            padding: 24px;
+        }
+        .chart-card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .chart-card h3 i {
+            color: var(--primary-color);
+        }
+        .bar-chart {
+            display: flex;
+            align-items: flex-end;
+            gap: 12px;
+            height: 200px;
+            padding-bottom: 30px;
+        }
+        .bar {
+            flex: 1;
+            background: linear-gradient(to top, var(--primary-color), var(--accent-color));
+            border-radius: 4px 4px 0 0;
+            min-width: 30px;
+            position: relative;
+            transition: var(--transition);
+        }
+        .bar:hover {
+            opacity: 0.8;
+        }
+        .bar-label {
+            position: absolute;
+            bottom: -24px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+        .bar-value {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+        .traffic-sources {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .source-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .source-bar {
+            flex: 1;
+            height: 32px;
+            background: var(--bg-dark);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        .source-bar-fill {
+            height: 100%;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 12px;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: width 1s ease;
+        }
+        .source-label {
+            width: 100px;
+            font-size: 0.9rem;
+        }
+        @media (max-width: 1024px) {
+            .analytics-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 768px) {
+            .content-area { padding: 20px 16px; }
+        }
+    </style>
+</head>
+<body>
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header"><div class="sidebar-logo">AUM Admin</div></div>
+        <div class="sidebar-user">
+            <div class="sidebar-user-avatar">A</div>
+            <div><div style="font-weight:700;font-size:0.95rem;" id="adminName">Admin</div><div style="font-size:0.8rem;color:var(--text-secondary);">Super Admin</div></div>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="admin-dashboard.html"><span class="sidebar-menu-icon">📊</span> Dashboard</a></li>
+            <li><a href="admin-projects.html"><span class="sidebar-menu-icon">📁</span> Projects</a></li>
+            <li><a href="admin-messages.html"><span class="sidebar-menu-icon">✉️</span> Messages</a></li>
+            <li><a href="admin-users.html"><span class="sidebar-menu-icon">👥</span> Users</a></li>
+            <li><a href="admin-portfolio.html"><span class="sidebar-menu-icon">🎨</span> Portfolio</a></li>
+            <li><a href="admin-blog.html"><span class="sidebar-menu-icon">📝</span> Blog Posts</a></li>
+            <li><a href="admin-gallery.html"><span class="sidebar-menu-icon">🖼️</span> Gallery</a></li>
+            <li><a href="admin-social-media.html"><span class="sidebar-menu-icon">🔗</span> Social Media</a></li>
+            <li><a href="admin-storages.html"><span class="sidebar-menu-icon">💾</span> Storage (128GB)</a></li>
+            <li><a href="admin-analytics.html" class="active"><span class="sidebar-menu-icon">📈</span> Analytics</a></li>
+            <li><a href="admin-logs.html"><span class="sidebar-menu-icon">📋</span> Activity Logs</a></li>
+            <li><a href="admin-settings.html"><span class="sidebar-menu-icon">⚙️</span> Settings</a></li>
+        </ul>
+        <div style="padding: 16px; border-top: 1px solid var(--border-color);">
+            <button onclick="logoutAdmin()" class="btn btn-danger" style="width: 100%;"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="top-header">
+            <div style="display:flex;align-items:center;gap:16px;">
+                <button class="mobile-menu-btn" onclick="toggleSidebar()" aria-label="Menu">☰</button>
+                <h1 style="font-size:1.25rem;">Analytics</h1>
+            </div>
+            <div style="display:flex;align-items:center;gap:16px;">
+                <button class="theme-toggle" onclick="toggleTheme()"><i class="fas fa-moon"></i></button>
+                <div style="display:flex;align-items:center;gap:12px;">
+                    <div class="sidebar-user-avatar" style="width:36px;height:36px;font-size:0.9rem;">A</div>
+                    <span style="font-weight:600;" id="headerAdminName">Admin</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="content-area">
+            <div class="page-header">
+                <div>
+                    <h1>Analytics Dashboard</h1>
+                    <p style="color:var(--text-secondary);">Track your portfolio performance</p>
+                </div>
+                <div style="display:flex;gap:12px;">
+                    <select class="filter-select" id="timeFilter" onchange="updateAnalytics()">
+                        <option value="7">Last 7 Days</option>
+                        <option value="30">Last 30 Days</option>
+                        <option value="365">This Year</option>
+                    </select>
+                    <button class="btn btn-primary" onclick="exportAnalytics()"><i class="fas fa-download"></i> Export</button>
+                </div>
+            </div>
+
+            <div class="stats-grid" style="margin-bottom:32px;">
+                <div class="stat-card">
+                    <div class="stat-icon blue"><i class="fas fa-eye"></i></div>
+                    <div class="stat-value" id="pageViews">0</div>
+                    <div class="stat-label">Page Views</div>
+                    <div class="stat-change positive">+23% vs last week</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon green"><i class="fas fa-user"></i></div>
+                    <div class="stat-value" id="uniqueVisitors">0</div>
+                    <div class="stat-label">Unique Visitors</div>
+                    <div class="stat-change positive">+15% vs last week</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon orange"><i class="fas fa-clock"></i></div>
+                    <div class="stat-value" id="avgSession">3:42</div>
+                    <div class="stat-label">Avg. Session</div>
+                    <div class="stat-change positive">+8% vs last week</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon red"><i class="fas fa-percentage"></i></div>
+                    <div class="stat-value" id="bounceRate">42%</div>
+                    <div class="stat-label">Bounce Rate</div>
+                    <div class="stat-change negative">+5% vs last week</div>
+                </div>
+            </div>
+
+            <div class="analytics-grid">
+                <div class="chart-card">
+                    <h3><i class="fas fa-chart-bar"></i> Daily Visitors</h3>
+                    <div class="bar-chart" id="dailyChart">
+                        <div class="bar" style="height: 60%;"><span class="bar-value">120</span><span class="bar-label">Mon</span></div>
+                        <div class="bar" style="height: 80%;"><span class="bar-value">180</span><span class="bar-label">Tue</span></div>
+                        <div class="bar" style="height: 45%;"><span class="bar-value">90</span><span class="bar-label">Wed</span></div>
+                        <div class="bar" style="height: 90%;"><span class="bar-value">210</span><span class="bar-label">Thu</span></div>
+                        <div class="bar" style="height: 70%;"><span class="bar-value">150</span><span class="bar-label">Fri</span></div>
+                        <div class="bar" style="height: 55%;"><span class="bar-value">110</span><span class="bar-label">Sat</span></div>
+                        <div class="bar" style="height: 40%;"><span class="bar-value">80</span><span class="bar-label">Sun</span></div>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <h3><i class="fas fa-pie-chart"></i> Traffic Sources</h3>
+                    <div class="traffic-sources">
+                        <div class="source-item">
+                            <span class="source-label">Direct</span>
+                            <div class="source-bar">
+                                <div class="source-bar-fill" style="width: 45%; background: var(--primary-color);">45%</div>
+                            </div>
+                        </div>
+                        <div class="source-item">
+                            <span class="source-label">Social</span>
+                            <div class="source-bar">
+                                <div class="source-bar-fill" style="width: 30%; background: var(--accent-color);">30%</div>
+                            </div>
+                        </div>
+                        <div class="source-item">
+                            <span class="source-label">Search</span>
+                            <div class="source-bar">
+                                <div class="source-bar-fill" style="width: 20%; background: var(--success-color);">20%</div>
+                            </div>
+                        </div>
+                        <div class="source-item">
+                            <span class="source-label">Referral</span>
+                            <div class="source-bar">
+                                <div class="source-bar-fill" style="width: 5%; background: var(--danger-color);">5%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="analytics-grid">
+                <div class="chart-card">
+                    <h3><i class="fas fa-globe"></i> Top Countries</h3>
+                    <div class="traffic-sources">
+                        <div class="source-item">
+                            <span class="source-label">🇳🇬 Nigeria</span>
+                            <div class="source-bar">
+                                <div class="source-bar-fill" style="width: 65%; background: var(--primary-color);">65%</div>
+                            </div>
+                        </div>
+                        <div class="source-item">
+                            <span class="source-label">🇺🇸 USA</span>
+                            <div class="source-bar">
+                                <div class="source-bar-fill" style="width: 15%; background: var(--accent-color);">15%</div>
+                            </div>
+                        </div>
+                        <div class="source-item">
+                            <span class="source-label">🇬🇧 UK</span>
+                            <div class="source-bar">
+                                <div class="source-bar-fill" style="width: 10%; background: var(--success-color);">10%</div>
+                            </div>
+                        </div>
+                        <div class="source-item">
+                            <span class="source-label">🌍 Others</span>
+                            <div class="source-bar">
+                                <div class="source-bar-fill" style="width: 10%; background: var(--secondary-color);">10%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <h3><i class="fas fa-desktop"></i> Device Breakdown</h3>
+                    <div class="traffic-sources">
+                        <div class="source-item">
+                            <span class="source-label">📱 Mobile</span>
+                            <div class="source-bar">
+                                <div class="source-bar-fill" style="width: 55%; background: var(--primary-color);">55%</div>
+                            </div>
+                        </div>
+                        <div class="source-item">
+                            <span class="source-label">💻 Desktop</span>
+                            <div class="source-bar">
+                                <div class="source-bar-fill" style="width: 35%; background: var(--accent-color);">35%</div>
+                            </div>
+                        </div>
+                        <div class="source-item">
+                            <span class="source-label">📱 Tablet</span>
+                            <div class="source-bar">
+                                <div class="source-bar-fill" style="width: 10%; background: var(--success-color);">10%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div class="toast-container"></div>
+    <script src="firebase-common.js"></script>
+    <script>
+        checkAuth();
+        document.getElementById('adminName').textContent = getAdminEmail().split('@')[0];
+        document.getElementById('headerAdminName').textContent = getAdminEmail().split('@')[0];
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+            var overlay = document.getElementById('mobileNavOverlay');
+            if (overlay) {
+                overlay.classList.toggle('active');
+            }
+        }
+
+        async function loadAnalytics() {
+            try {
+                const analytics = await DB.getAnalytics();
+                const pageViews = analytics.totalVisitors || 0;
+                const uniqueVisitors = Math.floor(pageViews * 0.7); // Estimate unique visitors
+                
+                document.getElementById('pageViews').textContent = pageViews.toLocaleString();
+                document.getElementById('uniqueVisitors').textContent = uniqueVisitors.toLocaleString();
+                
+                // Update daily chart with random data based on analytics
+                updateDailyChart(pageViews);
+            } catch (error) {
+                console.error('Error loading analytics:', error);
+                showToast('Error loading analytics', 'error');
+            }
+        }
+
+        function updateDailyChart(totalViews) {
+            const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+            const chart = document.getElementById('dailyChart');
+            const baseValue = Math.floor(totalViews / 7) || 100;
+            
+            chart.innerHTML = days.map((day, i) => {
+                const variation = 0.5 + Math.random(); // 50% to 150% of base
+                const value = Math.floor(baseValue * variation);
+                const height = Math.min(100, Math.max(20, (value / (baseValue * 1.5)) * 100));
+                return `<div class="bar" style="height: ${height}%;"><span class="bar-value">${value}</span><span class="bar-label">${day}</span></div>`;
+            }).join('');
+        }
+
+        function updateAnalytics() {
+            const filter = document.getElementById('timeFilter').value;
+            showToast(`Analytics updated for last ${filter} days`, 'success');
+            loadAnalytics();
+        }
+
+        function exportAnalytics() {
+            const data = {
+                pageViews: document.getElementById('pageViews').textContent,
+                uniqueVisitors: document.getElementById('uniqueVisitors').textContent,
+                avgSession: document.getElementById('avgSession').textContent,
+                bounceRate: document.getElementById('bounceRate').textContent,
+                exportedAt: new Date().toISOString()
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `analytics-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showToast('Analytics exported successfully!', 'success');
+        }
+
+        document.addEventListener('DOMContentLoaded', loadAnalytics);
+    
+        document.addEventListener("DOMContentLoaded", initMobileMenu);
+</script>
+
+    <div class="mobile-nav-overlay" id="mobileNavOverlay" onclick="toggleSidebar()"></div>
+</body>
+</html>

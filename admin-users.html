@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="theme-color" content="#2563eb">
+    <title>Users | Admin Panel</title>
+    <link rel="stylesheet" href="common.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        .content-area { padding: 32px; }
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        .users-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+        }
+        .user-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+            padding: 24px;
+            transition: var(--transition);
+        }
+        .user-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-color);
+        }
+        .user-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        .user-avatar {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: white;
+            font-size: 1.3rem;
+        }
+        .user-info h4 {
+            font-size: 1.1rem;
+            margin-bottom: 4px;
+        }
+        .user-info p {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+        .user-meta {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-color);
+        }
+        .user-meta-item {
+            text-align: center;
+        }
+        .user-meta-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        .user-meta-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+        .user-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+        }
+        @media (max-width: 768px) {
+            .content-area { padding: 20px 16px; }
+            .users-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header"><div class="sidebar-logo">AUM Admin</div></div>
+        <div class="sidebar-user">
+            <div class="sidebar-user-avatar">A</div>
+            <div><div style="font-weight:700;font-size:0.95rem;" id="adminName">Admin</div><div style="font-size:0.8rem;color:var(--text-secondary);">Super Admin</div></div>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="admin-dashboard.html"><span class="sidebar-menu-icon">📊</span> Dashboard</a></li>
+            <li><a href="admin-projects.html"><span class="sidebar-menu-icon">📁</span> Projects</a></li>
+            <li><a href="admin-messages.html"><span class="sidebar-menu-icon">✉️</span> Messages</a></li>
+            <li><a href="admin-users.html" class="active"><span class="sidebar-menu-icon">👥</span> Users</a></li>
+            <li><a href="admin-portfolio.html"><span class="sidebar-menu-icon">🎨</span> Portfolio</a></li>
+            <li><a href="admin-blog.html"><span class="sidebar-menu-icon">📝</span> Blog Posts</a></li>
+            <li><a href="admin-gallery.html"><span class="sidebar-menu-icon">🖼️</span> Gallery</a></li>
+            <li><a href="admin-social-media.html"><span class="sidebar-menu-icon">🔗</span> Social Media</a></li>
+            <li><a href="admin-storages.html"><span class="sidebar-menu-icon">💾</span> Storage (128GB)</a></li>
+            <li><a href="admin-analytics.html"><span class="sidebar-menu-icon">📈</span> Analytics</a></li>
+            <li><a href="admin-logs.html"><span class="sidebar-menu-icon">📋</span> Activity Logs</a></li>
+            <li><a href="admin-settings.html"><span class="sidebar-menu-icon">⚙️</span> Settings</a></li>
+        </ul>
+        <div style="padding: 16px; border-top: 1px solid var(--border-color);">
+            <button onclick="logoutAdmin()" class="btn btn-danger" style="width: 100%;"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="top-header">
+            <div style="display:flex;align-items:center;gap:16px;">
+                <button class="mobile-menu-btn" onclick="toggleSidebar()" aria-label="Menu">☰</button>
+                <h1 style="font-size:1.25rem;">Users</h1>
+            </div>
+            <div style="display:flex;align-items:center;gap:16px;">
+                <button class="theme-toggle" onclick="toggleTheme()"><i class="fas fa-moon"></i></button>
+                <div style="display:flex;align-items:center;gap:12px;">
+                    <div class="sidebar-user-avatar" style="width:36px;height:36px;font-size:0.9rem;">A</div>
+                    <span style="font-weight:600;" id="headerAdminName">Admin</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="content-area">
+            <div class="page-header">
+                <div>
+                    <h1>Users & Visitors</h1>
+                    <p style="color:var(--text-secondary);">Track and manage site visitors</p>
+                </div>
+            </div>
+
+            <div class="stats-grid" style="margin-bottom: 32px;">
+                <div class="stat-card">
+                    <div class="stat-icon blue"><i class="fas fa-users"></i></div>
+                    <div class="stat-value" id="totalUsers">0</div>
+                    <div class="stat-label">Total Users</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon green"><i class="fas fa-user-check"></i></div>
+                    <div class="stat-value" id="activeUsers">0</div>
+                    <div class="stat-label">Active Today</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon orange"><i class="fas fa-envelope"></i></div>
+                    <div class="stat-value" id="contactUsers">0</div>
+                    <div class="stat-label">Contacted</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon red"><i class="fas fa-globe"></i></div>
+                    <div class="stat-value" id="countries">0</div>
+                    <div class="stat-label">Countries</div>
+                </div>
+            </div>
+
+            <div class="users-grid" id="usersGrid">
+                <!-- Users loaded dynamically -->
+            </div>
+        </div>
+    </main>
+
+    <div class="toast-container"></div>
+
+    <script src="firebase-common.js"></script>
+    <script>
+        checkAuth();
+        document.getElementById('adminName').textContent = getAdminEmail().split('@')[0];
+        document.getElementById('headerAdminName').textContent = getAdminEmail().split('@')[0];
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+            var overlay = document.getElementById('mobileNavOverlay');
+            if (overlay) {
+                overlay.classList.toggle('active');
+            }
+        }
+
+        async function loadUsers() {
+            try {
+                const users = await DB.getUsers();
+                const messages = await DB.getMessages();
+
+                document.getElementById('totalUsers').textContent = users.length;
+                document.getElementById('contactUsers').textContent = messages.length;
+                document.getElementById('activeUsers').textContent = Math.floor(Math.random() * 10) + 1;
+                document.getElementById('countries').textContent = new Set(users.map(u => u.country).filter(Boolean)).size || 1;
+
+                const grid = document.getElementById('usersGrid');
+                if (users.length === 0) {
+                    grid.innerHTML = `
+                        <div style="grid-column:1/-1;text-align:center;padding:64px;color:var(--text-secondary);">
+                            <i class="fas fa-users" style="font-size:4rem;margin-bottom:24px;display:block;"></i>
+                            <h3>No visitors yet</h3>
+                            <p>Visitors will appear here when they interact with your site</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                grid.innerHTML = users.map(user => `
+                    <div class="user-card">
+                        <div class="user-header">
+                            <div class="user-avatar">${(user.name || 'U').charAt(0).toUpperCase()}</div>
+                            <div class="user-info">
+                                <h4>${user.name || 'Unknown'}</h4>
+                                <p>${user.email || 'No email'}</p>
+                            </div>
+                        </div>
+                        <div class="user-meta">
+                            <div class="user-meta-item">
+                                <div class="user-meta-value">${user.visits || 1}</div>
+                                <div class="user-meta-label">Visits</div>
+                            </div>
+                            <div class="user-meta-item">
+                                <div class="user-meta-value">${user.lastActive ? formatDate(user.lastActive) : 'N/A'}</div>
+                                <div class="user-meta-label">Last Active</div>
+                            </div>
+                        </div>
+                        <div class="user-actions">
+                            <button class="btn btn-sm btn-primary" onclick="showToast('Messaging feature coming soon', 'warning')"><i class="fas fa-envelope"></i> Message</button>
+                            <button class="btn btn-sm btn-secondary" onclick="showToast('Blocking feature coming soon', 'warning')"><i class="fas fa-ban"></i> Block</button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                showToast('Error loading users', 'error');
+                console.error(error);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadUsers);
+    
+        document.addEventListener("DOMContentLoaded", initMobileMenu);
+</script>
+
+    <div class="mobile-nav-overlay" id="mobileNavOverlay" onclick="toggleSidebar()"></div>
+</body>
+</html>
